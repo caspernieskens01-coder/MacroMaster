@@ -1,1 +1,72 @@
-<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Kip • Rijst • Groente</title><p style="background:#000;color:#e8f0f2;font:16px ui-sans-serif;padding:24px">Kip•Rijst•Groente pagina met calculator. <a href='../index.html' style='color:#05dbe1'>Terug</a></p>
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>MACROMASTER • Kip • Rijst • Groente</title>
+  <style>
+    :root{--brand:#05dbe1;--ink:#000;--bg:#000;--text:#e8f0f2;--muted:#a8b3b8;--card:#0b0f14;--card-border:#1b2730;--radius:18px;--shadow:0 12px 40px rgba(0,0,0,.55);--max:1000px}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+    a{color:inherit} .wrap{max-width:var(--max);margin:auto;padding:28px}
+    header{display:flex;gap:14px;align-items:center;justify-content:space-between;margin-bottom:24px}
+    .titles{line-height:1}.site-title{font-weight:900;font-size:20px}.byline{font-size:12px;color:var(--muted)}
+    .pill{display:inline-flex;gap:8px;align-items:center;background:rgba(5,219,225,.1);border:1px solid rgba(5,219,225,.28);padding:6px 10px;border-radius:999px;font-size:12px}
+    .card{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);box-shadow:var(--shadow)} .p24{padding:24px}
+    .grid{display:grid;gap:20px} @media(min-width:900px){.grid{grid-template-columns:1.2fr .8fr}}
+    h1{font-size:clamp(24px,3.5vw,36px);margin:0 0 4px;color:#fff} h2{font-size:clamp(18px,2.5vw,22px);margin:20px 0 8px;color:#fff}
+    .muted{color:var(--muted)} .row{display:flex;gap:12px;flex-wrap:wrap} label{font-size:12px;color:var(--muted)}
+    input,button{background:#0c141a;border:1px solid #22323c;color:var(--text);border-radius:12px;padding:10px 12px;font:inherit;outline:none}
+    input[type="number"]{width:120px} .btn{cursor:pointer;transition:.15s transform ease,.15s opacity ease;background:var(--brand);color:var(--ink);border:0;font-weight:800}
+    .btn:hover{transform:translateY(-1px)} .btn:active{transform:translateY(0)}
+    .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:10px} .kpi .card{padding:14px;text-align:center;border-color:#22323c}
+    .kpi h3{margin:6px 0 0;font-size:18px;color:#fff} .kpi p{margin:0;font-size:12px;color:var(--muted)}
+    table{width:100%;border-collapse:collapse;margin-top:8px;overflow:hidden;border-radius:12px}
+    th,td{padding:12px;border-bottom:1px solid #22323c;text-align:left;font-size:14px}
+    th{color:#c4d0d6;font-weight:700;background:linear-gradient(0deg,rgba(5,219,225,.08),transparent)}
+    tfoot td{font-weight:800;color:#fff}
+    nav a{font-size:14px;color:var(--muted)} nav a:hover{text-decoration:underline}
+    .divider{height:1px;background:linear-gradient(90deg,rgba(255,255,255,.05),var(--brand),rgba(255,255,255,.05));opacity:.35;margin:18px 0}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="titles"><div class="site-title">MACROMASTER</div><div class="byline">by CASPER PT</div></div>
+      <span class="pill">⚡ Porties direct aanpasbaar</span>
+    </header>
+
+    <nav><a href="../index.html">← Terug naar overzicht</a></nav>
+
+    <div class="grid" style="margin-top:10px">
+      <section class="card p24">
+        <h1>Kip • Rijst • Groente</h1>
+        <p class="muted">Basisrecept dat je in 1 klik schaalt naar jouw porties.</p>
+
+        <div class="row" style="margin-top:10px">
+          <div><label>Porties</label><br><input id="servings" type="number" min="1" step="1" value="1"></div>
+          <div><label>Kip (g p.p.)</label><br><input id="target-meat" type="number" min="0" step="10" value="200"></div>
+          <div><label>Rijst (g p.p., droog)</label><br><input id="target-rice" type="number" min="0" step="10" value="100"></div>
+          <div><label>Groente (g p.p.)</label><br><input id="target-veg" type="number" min="0" step="25" value="200"></div>
+          <div><label>&nbsp;</label><br><button class="btn" id="apply">Toepassen</button></div>
+        </div>
+
+        <div class="divider"></div>
+        <h2>Ingrediënten</h2>
+        <table id="ingredients-table">
+          <thead><tr><th>Ingrediënt</th><th>Hoeveelheid</th><th>Eiwit (g)</th><th>Koolhydraten (g)</th><th>Vet (g)</th><th>kcal</th></tr></thead>
+          <tbody></tbody>
+          <tfoot><tr><td><b>Totaal</b></td><td id="t-q"></td><td id="t-p"></td><td id="t-c"></td><td id="t-f"></td><td id="t-k"></td></tr></tfoot>
+        </table>
+
+        <h2 style="margin-top:24px">Bereiding</h2>
+        <ol class="muted">
+          <li>Kruid de kip, bak goudbruin en gaar.</li>
+          <li>Kook de rijst volgens verpakking.</li>
+          <li>Roerbak of stoom de groente.</li>
+          <li>Breng op smaak naar voorkeur.</li>
+        </ol>
+      </section>
+
+      <aside class="card p24">
+        <h2>Macro's per hele bereiding</h2>
+        <div class="kpi" style="margin-top:12px">
+          <div
