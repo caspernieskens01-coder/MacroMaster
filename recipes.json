@@ -12,7 +12,10 @@
       "rund",
       "sojasaus",
       "gember",
-      "knoflook"
+      "knoflook",
+      "sesamolie",
+      "rijstazijn",
+      "water"
     ]
   },
   {
@@ -27,7 +30,8 @@
     "ingredients": [
       "kip",
       "rijst",
-      "broccoli"
+      "broccoli",
+      "olijfolie"
     ]
   }
 ]
