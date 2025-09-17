@@ -69,4 +69,55 @@
       <aside class="card p24">
         <h2>Macro's per hele bereiding</h2>
         <div class="kpi" style="margin-top:12px">
-          <div
+          <div class="card"><p class="muted">Eiwit</p><h3 id="kpi-p">–</h3></div>
+          <div class="card"><p class="muted">Koolhydraten</p><h3 id="kpi-c">–</h3></div>
+          <div class="card"><p class="muted">Vetten</p><h3 id="kpi-f">–</h3></div>
+          <div class="card"><p class="muted">Calorieën</p><h3 id="kpi-k">–</h3></div>
+        </div>
+        <p class="muted" style="margin-top:12px">Waarden o.b.v. standaard voedingswaardes. Pas <code>FOOD_DB</code> aan indien gewenst.</p>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const FOOD_DB = {
+      kipfilet:    { label:"Kipfilet (rauw)",      P:23, C:0,  F:1.5, K:110 },
+      witte_rijst: { label:"Witte rijst (droog)",  P:7,  C:78, F:0.6, K:360 },
+      broccoli:    { label:"Broccoli (rauw)",      P:3,  C:7,  F:0.4, K:35 },
+      olijfolie:   { label:"Olijfolie",            P:0,  C:0,  F:100,K:900 }
+    };
+    const BASE = [
+      { key:"kipfilet",    grams:200 },
+      { key:"witte_rijst", grams:100 },
+      { key:"broccoli",    grams:200 }
+    ];
+    const round=(x,n=0)=>{const m=10**n;return Math.round(x*m)/m};
+    const macros=(k,g)=>{const f=FOOD_DB[k],t=g/100;return {P:f.P*t,C:f.C*t,F:f.F*t,K:f.K*t}};
+    const render=L=>{
+      const tb=document.querySelector('#ingredients-table tbody');tb.innerHTML='';
+      let tQ=0,tP=0,tC=0,tF=0,tK=0;
+      L.forEach(i=>{const f=FOOD_DB[i.key],m=macros(i.key,i.grams);tQ+=i.grams;tP+=m.P;tC+=m.C;tF+=m.F;tK+=m.K;
+        const tr=document.createElement('tr');tr.innerHTML=`<td>${f.label}</td><td>${round(i.grams)} g</td><td>${round(m.P,1)}</td><td>${round(m.C,1)}</td><td>${round(m.F,1)}</td><td>${round(m.K,0)}</td>`;tb.appendChild(tr);});
+      document.querySelector('#t-q').textContent=`${round(tQ)} g`;
+      document.querySelector('#t-p').textContent=round(tP,1);
+      document.querySelector('#t-c').textContent=round(tC,1);
+      document.querySelector('#t-f').textContent=round(tF,1);
+      document.querySelector('#t-k').textContent=round(tK,0);
+      document.querySelector('#kpi-p').textContent=`${round(tP,1)} g`;
+      document.querySelector('#kpi-c').textContent=`${round(tC,1)} g`;
+      document.querySelector('#kpi-f').textContent=`${round(tF,1)} g`;
+      document.querySelector('#kpi-k').textContent=`${round(tK,0)} kcal`;
+    };
+    const scaleTargets=(B,{meat,rice,veg})=>B.map(x=>x.key==='kipfilet'?{...x,grams:meat}:x.key==='witte_rijst'?{...x,grams:rice}:x.key==='broccoli'?{...x,grams:veg}:x);
+    const multiply=(L,s)=>L.map(x=>({ ...x, grams:x.grams*s }));
+    let current=[...BASE];render(current);
+    document.querySelector('#apply').addEventListener('click',()=>{
+      const s=Math.max(1,parseInt(document.querySelector('#servings').value||'1',10));
+      const meat=Math.max(0,parseFloat(document.querySelector('#target-meat').value||'0'));
+      const rice=Math.max(0,parseFloat(document.querySelector('#target-rice').value||'0'));
+      const veg=Math.max(0,parseFloat(document.querySelector('#target-veg').value||'0'));
+      current=multiply(scaleTargets(BASE,{meat,rice,veg}),s);render(current);
+    });
+  </script>
+</body>
+</html>
