@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MACROMASTER • Recepten</title>
+<style>
+:root{--brand:#05dbe1;--ink:#000;--bg:#000;--text:#e8f0f2;--muted:#a8b3b8;--card:#0b0f14;--card-border:#1b2730;--radius:18px;--shadow:0 12px 40px rgba(0,0,0,.55);--max:1100px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+a{color:inherit;text-decoration:none}.wrap{max-width:var(--max);margin:auto;padding:28px}
+header{display:flex;gap:14px;align-items:center;justify-content:space-between;margin-bottom:24px}
+.logo{height:46px;filter:drop-shadow(0 2px 10px rgba(5,219,225,.25))}
+.pill{display:inline-flex;gap:8px;align-items:center;background:rgba(5,219,225,.1);border:1px solid rgba(5,219,225,.28);padding:6px 10px;border-radius:999px;font-size:12px}
+.controls{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0 16px}
+.search{flex:1 1 240px;min-width:220px;display:flex;gap:8px}
+input[type="search"]{flex:1;padding:12px 14px;border-radius:12px;border:1px solid #22323c;background:#0c141a;color:var(--text)}
+.btn{padding:12px 14px;border-radius:12px;border:0;cursor:pointer;background:var(--brand);color:var(--ink);font-weight:800}
+.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{padding:8px 12px;border-radius:999px;border:1px solid #22323c;background:#0c141a;color:var(--text);font-size:14px;cursor:pointer;user-select:none}
+.chip.active{border-color:rgba(5,219,225,.5);box-shadow:0 0 0 2px rgba(5,219,225,.15) inset}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-top:12px}
+.card{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;display:flex;flex-direction:column;gap:8px}
+.card h3{margin:0;font-size:18px;color:#fff}.card p{margin:0;color:var(--muted);font-size:14px;min-height:38px}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}.tag{font-size:12px;padding:6px 10px;border:1px solid #22323c;border-radius:999px;background:#0c141a;color:var(--text)}
+.card .action{margin-top:8px;align-self:flex-start}
+.byline{font-size:12px;color:#a8b3b8}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="width:46px;height:46px;background:rgba(5,219,225,.1);border:1px solid rgba(5,219,225,.28);border-radius:12px;display:grid;place-items:center;font-weight:900;color:#05dbe1">MM</div>
+      <div>
+        <div style="font-weight:900;letter-spacing:.2px">MACROMASTER</div>
+        <div class="byline">by CASPER PT</div>
+      </div>
+    </div>
+    <span class="pill">🔎 JSON-gestuurd • zoek &amp; filter</span>
+  </header>
+
+  <section>
+    <div class="controls">
+      <div class="search">
+        <input id="q" type="search" placeholder="Zoek op titel of ingrediënten… (bijv. 'teriyaki', 'broccoli', 'rijst')" />
+        <button class="btn" id="clear">Wissen</button>
+      </div>
+    </div>
+    <div class="chips" id="chips"></div>
+  </section>
+
+  <section class="grid" id="grid"></section>
+</div>
+
+<script>
+const CATEGORIES = ["vlees","rijst","kip","aardappel","pasta","zoete aardappel","vis","vega","vegan"];
+const state = { q:"", cats:new Set(), data:[] };
+function chips(){ const b=document.getElementById('chips'); b.innerHTML=""; CATEGORIES.forEach(c=>{ const e=document.createElement('button'); e.className='chip'+(state.cats.has(c)?' active':''); e.textContent=c; e.onclick=()=>{ state.cats.has(c)?state.cats.delete(c):state.cats.add(c); chips(); grid(); }; b.appendChild(e); }); }
+function ok(r){ const q=state.q.toLowerCase().trim(); if(q){ const h=(r.title+" "+(r.blurb||"")+" "+(r.ingredients||[]).join(" ")).toLowerCase(); if(!h.includes(q)) return false; } if(state.cats.size>0){ for(const c of state.cats) if(!(r.tags||[]).includes(c)) return false; } return true; }
+function grid(){ const g=document.getElementById('grid'); g.innerHTML=""; const L=state.data.filter(ok); if(L.length===0){ const d=document.createElement('div'); d.className='card'; d.innerHTML="<h3>Geen resultaten</h3><p class='muted'>Pas je zoekterm of filters aan.</p>"; g.appendChild(d); return; } L.forEach(r=>{ const el=document.createElement('article'); el.className='card'; el.innerHTML=`<h3>${r.title}</h3><p>${r.blurb||""}</p><div class="meta">${(r.tags||[]).map(t=>`<span class='tag'>${t}</span>`).join('')}</div><a class="btn action" href="${r.url}">Open recept</a>`; g.appendChild(el); }); }
+document.getElementById('q').addEventListener('input', e=>{ state.q=e.target.value; grid(); });
+document.getElementById('clear').addEventListener('click', ()=>{ state.q=""; document.getElementById('q').value=""; grid(); });
+chips();
+fetch('recipes.json', { cache: 'no-cache' }).then(r=>r.json()).then(d=>{ state.data=d; grid(); }).catch(()=>{ document.getElementById('grid').innerHTML="<div class='card'><h3>recipes.json niet gevonden</h3></div>"; });
+</script>
+</body></html>
