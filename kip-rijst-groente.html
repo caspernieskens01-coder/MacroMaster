@@ -1,1 +1,92 @@
-<!doctype html><meta charset='utf-8'><meta name=viewport content='width=device-width,initial-scale=1'><title>Kip • Rijst • Groente</title><body style='margin:0;background:#000;color:#e8f0f2;font:16px system-ui;padding:24px'><h1>Kip • Rijst • Groente</h1><p>Als je dit ziet, werkt je receptpagina.</p><p><a href='../index.html' style='color:#05dbe1'>← Terug</a></p></body>
+<!doctype html>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kip • Rijst • Groente — MACROMASTER</title>
+<style>
+:root{--brand:#05dbe1;--bg:#000;--text:#e8f0f2;--muted:#a8b3b8;--card:#0b0f14;--bd:#1b2730;--r:18px;--max:1000px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui}
+a{color:#05dbe1;text-decoration:none}.wrap{max-width:var(--max);margin:auto;padding:24px}
+h1{margin:8px 0 4px}.card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:18px}
+.grid{display:grid;gap:18px} @media(min-width:900px){.grid{grid-template-columns:1.2fr .8fr}}
+.row{display:flex;gap:12px;flex-wrap:wrap;margin:8px 0}
+label{font-size:12px;color:var(--muted)} input,button{background:#0c141a;border:1px solid #22323c;color:var(--text);border-radius:12px;padding:10px 12px;font:inherit}
+input[type=number]{width:120px} .btn{background:var(--brand);color:#000;font-weight:800;border:0;cursor:pointer}
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kpi .card{padding:12px;text-align:center} .kpi h3{margin:6px 0 0} .kpi p{margin:0;color:var(--muted);font-size:12px}
+table{width:100%;border-collapse:collapse;margin-top:8px;overflow:hidden;border-radius:12px}
+th,td{padding:10px;border-bottom:1px solid #22323c;text-align:left;font-size:14px} th{color:#c4d0d6;font-weight:700}
+</style>
+<div class="wrap">
+  <a href="../index.html">← Terug</a>
+  <h1>Kip • Rijst • Groente</h1>
+  <p style="color:var(--muted)">Basisrecept dat je in 1 klik schaalt naar jouw porties.</p>
+
+  <div class="grid">
+    <section class="card">
+      <div class="row">
+        <div><label>Porties</label><br><input id="servings" type="number" min="1" step="1" value="1"></div>
+        <div><label>Kip (g p.p.)</label><br><input id="meat" type="number" min="0" step="10" value="200"></div>
+        <div><label>Rijst (g p.p., droog)</label><br><input id="rice" type="number" min="0" step="10" value="100"></div>
+        <div><label>Groente (g p.p.)</label><br><input id="veg" type="number" min="0" step="25" value="200"></div>
+        <div style="align-self:end"><button class="btn" id="apply">Toepassen</button></div>
+      </div>
+
+      <h3 style="margin-top:10px">Ingrediënten</h3>
+      <table id="t">
+        <thead><tr><th>Ingrediënt</th><th>Hoeveelheid</th><th>Eiwit</th><th>Khd</th><th>Vet</th><th>kcal</th></tr></thead>
+        <tbody></tbody>
+        <tfoot><tr><td><b>Totaal</b></td><td id="q"></td><td id="p"></td><td id="c"></td><td id="f"></td><td id="k"></td></tr></tfoot>
+      </table>
+
+      <h3 style="margin-top:10px">Bereiding</h3>
+      <ol style="color:var(--muted)">
+        <li>Kruid de kip, bak goudbruin en gaar.</li>
+        <li>Kook de rijst volgens verpakking.</li>
+        <li>Roerbak of stoom de groente.</li>
+      </ol>
+    </section>
+
+    <aside class="card">
+      <h3>Macro's (hele bereiding)</h3>
+      <div class="kpi" style="margin-top:8px">
+        <div class="card"><p>Eiwit</p><h3 id="kp">–</h3></div>
+        <div class="card"><p>Koolhydraten</p><h3 id="kc">–</h3></div>
+        <div class="card"><p>Vetten</p><h3 id="kf">–</h3></div>
+        <div class="card"><p>Calorieën</p><h3 id="kk">–</h3></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+const DB={ kip:{lab:"Kipfilet (rauw)",P:23,C:0,F:1.5,K:110},
+           rijst:{lab:"Witte rijst (droog)",P:7,C:78,F:0.6,K:360},
+           groente:{lab:"Broccoli (rauw)",P:3,C:7,F:0.4,K:35} };
+const R=(x,n=0)=>{const m=10**n;return Math.round(x*m)/m};
+const M=(f,g)=>{const t=g/100;return {P:f.P*t,C:f.C*t,F:f.F*t,K:f.K*t}};
+function render(){
+  const s=Math.max(1,parseInt(document.querySelector('#servings').value||'1',10));
+  const m=Math.max(0,parseFloat(document.querySelector('#meat').value||'0'));
+  const r=Math.max(0,parseFloat(document.querySelector('#rice').value||'0'));
+  const v=Math.max(0,parseFloat(document.querySelector('#veg').value||'0'));
+  const rows=[ {f:DB.kip,g:m*s}, {f:DB.rijst,g:r*s}, {f:DB.groente,g:v*s} ];
+  const tb=document.querySelector('#t tbody'); tb.innerHTML='';
+  let tQ=0,tP=0,tC=0,tF=0,tK=0;
+  rows.forEach(x=>{
+    const mm=M(x.f,x.g); tQ+=x.g; tP+=mm.P; tC+=mm.C; tF+=mm.F; tK+=mm.K;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${x.f.lab}</td><td>${R(x.g)} g</td><td>${R(mm.P,1)}</td><td>${R(mm.C,1)}</td><td>${R(mm.F,1)}</td><td>${R(mm.K,0)}</td>`;
+    tb.appendChild(tr);
+  });
+  document.querySelector('#q').textContent=`${R(tQ)} g`;
+  document.querySelector('#p').textContent=R(tP,1);
+  document.querySelector('#c').textContent=R(tC,1);
+  document.querySelector('#f').textContent=R(tF,1);
+  document.querySelector('#k').textContent=R(tK,0);
+  document.querySelector('#kp').textContent=`${R(tP,1)} g`;
+  document.querySelector('#kc').textContent=`${R(tC,1)} g`;
+  document.querySelector('#kf').textContent=`${R(tF,1)} g`;
+  document.querySelector('#kk').textContent=`${R(tK,0)} kcal`;
+}
+document.querySelector('#apply').addEventListener('click',render);
+render();
+</script>
