@@ -1,129 +1,284 @@
 <!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MACROMASTER • Recepten</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Macromasters — Recepten met macro's</title>
   <style>
-    :root{--brand:#05dbe1;--bg:#000;--text:#e8f0f2;--muted:#a8b3b8;--card:#0b0f14;--bd:#1b2730;--r:18px;--max:1100px}
-    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui}
-    a{color:inherit;text-decoration:none}
-    .wrap{max-width:var(--max);margin:auto;padding:28px}
-    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
-    .pill{display:inline-flex;gap:8px;background:rgba(5,219,225,.1);border:1px solid rgba(5,219,225,.28);padding:6px 10px;border-radius:999px;font-size:12px}
-    .controls{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-    .search{flex:1 1 240px;min-width:220px;display:flex;gap:8px}
-    input[type=search]{flex:1;padding:12px 14px;border-radius:12px;border:1px solid #22323c;background:#0c141a;color:var(--text)}
-    .btn{padding:12px 14px;border-radius:12px;border:0;background:var(--brand);color:#000;font-weight:800;cursor:pointer}
-    .chips{display:flex;gap:8px;flex-wrap:wrap}
-    .chip{padding:8px 12px;border-radius:999px;border:1px solid #22323c;background:#0c141a;color:var(--text);font-size:14px;cursor:pointer}
-    .chip.active{border-color:rgba(5,219,225,.5)}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-top:12px}
-    .card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:8px}
-    .card h3{margin:0;color:#fff}
-    .card p{margin:0;color:var(--muted)}
+    :root{--bg:#0b0c10;--card:#12131a;--muted:#a3a3a3;--text:#f5f5f5;--acc:#0BDBE1;--ok:#22c55e;--warn:#f59e0b}
+    *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;background:linear-gradient(180deg,#0b0c10, #111218);color:var(--text)}
+    header{position:sticky;top:0;z-index:10;background:rgba(11,12,16,.8);backdrop-filter:blur(8px);border-bottom:1px solid #1f2430}
+    .wrap{max-width:1100px;margin:0 auto;padding:20px}
+    h1{margin:0;font-weight:800;letter-spacing:.3px}
+    .sub{color:var(--muted);margin-top:6px}
+    .toolbar{display:grid;grid-template-columns:1fr 180px 160px;gap:10px;margin-top:14px}
+    input,select{background:#0f1117;border:1px solid #242938;color:var(--text);padding:12px 14px;border-radius:12px;outline:none}
+    input::placeholder{color:#80859b}
+    main{max-width:1100px;margin:18px auto;padding:0 20px}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+    .card{grid-column:span 4;background:var(--card);border:1px solid #1e2230;border-radius:16px;overflow:hidden;transition:transform .12s ease, box-shadow .12s ease}
+    .card:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+    .thumb{aspect-ratio:16/9;background:#0f1117;display:flex;align-items:center;justify-content:center;color:#6b7280;font-size:12px}
+    .pad{padding:14px}
+    .title{font-weight:700;margin:6px 0 8px}
+    .meta{display:flex;gap:8px;flex-wrap:wrap}
+    .pill{font-size:12px;padding:6px 8px;border-radius:999px;border:1px solid #283047;background:#0f1117}
+    .kcal{color:var(--acc);border-color:#11434b}
+    .macros{display:flex;gap:10px;margin-top:8px}
+    .badge{font-size:12px;padding:6px 8px;border-radius:10px;background:#0f1117;border:1px solid #283047}
+    .link{all:unset;cursor:pointer}
+    .empty{color:var(--muted);text-align:center;padding:40px}
+    .detail{max-width:900px;margin:0 auto}
+    .back{display:inline-block;margin:0 0 14px 0}
+    .section{margin:18px 0}
+    ul{margin:8px 0 0 18px}
+    .footer{color:#8b91a3;text-align:center;padding:30px 0;border-top:1px solid #1e2230;margin-top:28px}
+    @media (max-width:960px){.card{grid-column:span 6}.toolbar{grid-template-columns:1fr 1fr}.hide-sm{display:none}}
+    @media (max-width:640px){.card{grid-column:span 12}}
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div>
-        <div style="font-weight:900">MACROMASTER</div>
-        <div style="font-size:12px;color:#a8b3b8">by CASPER PT</div>
+  <header>
+    <div class="wrap">
+      <h1>Macromasters</h1>
+      <div class="sub">Recepten met kcal & macro's. Zoek, filter, open details.</div>
+      <div class="toolbar">
+        <input id="q" type="search" placeholder="Zoek op titel, ingrediënt, tag… (bijv. 'kip', 'pasta')" />
+        <select id="cat">
+          <option value="">Alle categorieën</option>
+          <option value="ontbijt">Ontbijt</option>
+          <option value="lunch">Lunch</option>
+          <option value="diner">Diner</option>
+          <option value="snack">Snack</option>
+        </select>
+        <select id="sort">
+          <option value="">Sorteer op</option>
+          <option value="kcal-asc">Kcal ↑</option>
+          <option value="kcal-desc">Kcal ↓</option>
+          <option value="protein-desc">Eiwit ↓</option>
+          <option value="carbs-desc">Koolh. ↓</option>
+          <option value="fat-desc">Vetten ↓</option>
+        </select>
       </div>
-      <span class="pill">🔎 JSON-gestuurd</span>
-    </header>
+    </div>
+  </header>
 
-    <section>
-      <div class="controls">
-        <div class="search">
-          <input id="q" type="search" placeholder="Zoek op titel of ingrediënt…">
-          <button class="btn" id="clear">Wissen</button>
-        </div>
-      </div>
-      <div class="chips" id="chips"></div>
-    </section>
+  <main>
+    <div id="listView" class="wrap">
+      <div id="recipes" class="grid" aria-live="polite"></div>
+      <div id="empty" class="empty" hidden>Geen resultaten. Pas je zoekopdracht of filters aan.</div>
+    </div>
 
-    <section class="grid" id="grid"></section>
-  </div>
+    <div id="detailView" class="wrap detail" hidden></div>
+  </main>
 
-  <!-- INLINE FALLBACK DATA: dit wordt gebruikt als recipes.json ontbreekt -->
-  <script id="recipes-inline" type="application/json">
+  <div class="footer">© <span id="year"></span> Macromasters — gebouwd voor snelle macro‑checks.</div>
+
+  <!--
+  📁 Plaats deze bestanden in de **root** van je repo (zelfde map):
+  - index.html (dit bestand)
+  - recipes.json  ← BELANGRIJK: exact zo genaamd, zelfde map
+
+  🔧 Voorbeeld recipes.json (plak dit in een nieuw bestand recipes.json):
   [
     {
-      "id": "beef-teriyaki",
-      "title": "Beef Teriyaki",
-      "blurb": "Suikervrij, zonder binders. Glans door reductie. Sojasaus, gember, knoflook.",
-      "url": "recipes/beef-teriyaki.html",
-      "tags": ["vlees", "rijst"],
-      "ingredients": ["rund","sojasaus","gember","knoflook","sesamolie","rijstazijn","water"]
+      "id": "chicken-teriyaki-rice",
+      "title": "Chicken Teriyaki Rice (suikervrij)",
+      "category": "diner",
+      "kcal": 620,
+      "macros": {"protein": 52, "carbs": 78, "fat": 14},
+      "servings": 1,
+      "time": 20,
+      "image": "",
+      "tags": ["rijst","kip","teriyaki","high-protein"],
+      "ingredients": [
+        "150 g kipfilet",
+        "200 g gekookte jasmijnrijst",
+        "150 g broccoli",
+        "15 ml sojasaus (normaal)",
+        "10 ml mirin 0% suiker of water",
+        "5 ml sesamolie"
+      ],
+      "steps": [
+        "Bak kip goudbruin, voeg broccoli toe.",
+        "Roer sojasaus + mirin/water + sesamolie erdoor.",
+        "Serveren op rijst."
+      ]
     },
     {
-      "id": "kip-rijst-groente",
-      "title": "Kip • Rijst • Groente",
-      "blurb": "Basis fitness recept; stel g/pp in en schaal porties + macro's.",
-      "url": "recipes/kip-rijst-groente.html",
-      "tags": ["kip", "rijst"],
-      "ingredients": ["kip","rijst","broccoli","olijfolie"]
+      "id": "skyr-bowl",
+      "title": "Volle kwark bowl met fruit",
+      "category": "ontbijt",
+      "kcal": 480,
+      "macros": {"protein": 35, "carbs": 52, "fat": 15},
+      "servings": 1,
+      "time": 5,
+      "image": "",
+      "tags": ["kwark","fruit","makkelijk"],
+      "ingredients": [
+        "500 g volle kwark",
+        "100 g aardbeien",
+        "30 g muesli"
+      ],
+      "steps": ["Alles in een kom, klaar."]
     }
   ]
-  </script>
+
+  🧪 Test-lokaal: open index.html dubbelklik (fetch werkt ook via file:// in moderne browsers). Op GitHub Pages werkt fetch standaard zolang recipes.json in dezelfde map staat.
+  -->
 
   <script>
-    const CATEGORIES=["vlees","rijst","kip","aardappel","pasta","zoete aardappel","vis","vega","vegan"];
-    const state={q:"",cats:new Set(),data:[]};
+    const $ = (q, el=document) => el.querySelector(q);
+    const $$ = (q, el=document) => [...el.querySelectorAll(q)];
 
-    function getInline(){ try{ return JSON.parse(document.getElementById('recipes-inline').textContent); }catch(e){ return []; } }
+    const state = {
+      all: [],
+      view: 'list', // 'list' | 'detail'
+      query: '',
+      cat: '',
+      sort: ''
+    };
+
+    function slugify(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')}
+
     async function loadData(){
       try{
-        const r=await fetch('recipes.json',{cache:'no-cache'});
-        if(!r.ok) throw new Error('not ok');
-        return await r.json();
-      }catch(e){
-        return getInline(); // fallback
+        // Cache-bust tijdens testen
+        const res = await fetch('./recipes.json?cb=' + Date.now());
+        if(!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        if(!Array.isArray(data)) throw new Error('recipes.json moet een array zijn');
+        return data.map(r => ({...r, id: r.id || slugify(r.title)}));
+      }catch(err){
+        console.warn('Kon recipes.json niet laden, val terug op inline data. Fout:', err.message);
+        // Fallback inline (zodat de pagina werkt ook als JSON nog niet staat)
+        return JSON.parse(document.getElementById('recipes-fallback').textContent);
       }
     }
 
-    function renderChips(){
-      const box=document.getElementById('chips'); box.innerHTML="";
-      CATEGORIES.forEach(cat=>{
-        const b=document.createElement('button');
-        b.className='chip'+(state.cats.has(cat)?' active':'');
-        b.textContent=cat;
-        b.onclick=()=>{ state.cats.has(cat)?state.cats.delete(cat):state.cats.add(cat); renderChips(); renderGrid(); };
-        box.appendChild(b);
-      });
-    }
-    function match(r){
-      const q=state.q.toLowerCase().trim();
+    function applyFilters(list){
+      let out = list;
+      const q = state.query.trim().toLowerCase();
       if(q){
-        const hay=(r.title+" "+(r.blurb||"")+" "+(r.ingredients||[]).join(" ")).toLowerCase();
-        if(!hay.includes(q)) return false;
+        out = out.filter(r => (
+          (r.title||'').toLowerCase().includes(q) ||
+          (r.tags||[]).join(' ').toLowerCase().includes(q) ||
+          (r.ingredients||[]).join(' ').toLowerCase().includes(q)
+        ));
       }
-      if(state.cats.size>0){ for(const c of state.cats) if(!(r.tags||[]).includes(c)) return false; }
-      return true;
+      if(state.cat){ out = out.filter(r => (r.category||'').toLowerCase() === state.cat) }
+      switch(state.sort){
+        case 'kcal-asc': out = out.slice().sort((a,b)=>a.kcal-b.kcal); break;
+        case 'kcal-desc': out = out.slice().sort((a,b)=>b.kcal-a.kcal); break;
+        case 'protein-desc': out = out.slice().sort((a,b)=> (b.macros?.protein||0) - (a.macros?.protein||0)); break;
+        case 'carbs-desc': out = out.slice().sort((a,b)=> (b.macros?.carbs||0) - (a.macros?.carbs||0)); break;
+        case 'fat-desc': out = out.slice().sort((a,b)=> (b.macros?.fat||0) - (a.macros?.fat||0)); break;
+      }
+      return out;
     }
-    function renderGrid(){
-      const grid=document.getElementById('grid'); grid.innerHTML="";
-      const list=state.data.filter(match);
-      if(list.length===0){
-        const empty=document.createElement('div'); empty.className='card';
-        empty.innerHTML="<h3>Geen resultaten</h3><p class='muted'>Pas je zoekterm of filters aan.</p>";
-        grid.appendChild(empty); return;
+
+    function renderList(list){
+      const wrap = document.getElementById('recipes');
+      wrap.innerHTML = '';
+      if(!list.length){ document.getElementById('empty').hidden = false; return }
+      document.getElementById('empty').hidden = true;
+      for(const r of list){
+        const el = document.createElement('article');
+        el.className = 'card';
+        el.innerHTML = `
+          <button class="link" data-id="${r.id}" aria-label="Open recept ${r.title}">
+            <div class="thumb">${r.image?`<img src="${r.image}" alt="${r.title}" style="width:100%;height:100%;object-fit:cover">`:'Geen afbeelding'}</div>
+            <div class="pad">
+              <div class="title">${r.title}</div>
+              <div class="meta">
+                ${r.category?`<span class="pill">${r.category}</span>`:''}
+                <span class="pill kcal">${r.kcal} kcal</span>
+                ${r.time?`<span class="pill">${r.time} min</span>`:''}
+              </div>
+              <div class="macros">
+                <span class="badge">P ${r.macros?.protein ?? 0} g</span>
+                <span class="badge">KH ${r.macros?.carbs ?? 0} g</span>
+                <span class="badge">V ${r.macros?.fat ?? 0} g</span>
+              </div>
+            </div>
+          </button>`;
+        el.addEventListener('click',()=> openDetail(r.id));
+        wrap.appendChild(el);
       }
-      list.forEach(r=>{
-        const el=document.createElement('article'); el.className='card';
-        el.innerHTML=`<h3>${r.title}</h3><p>${r.blurb||""}</p>
-          <div class="meta">${(r.tags||[]).map(t=>`<span class='chip'>${t}</span>`).join('')}</div>
-          <a class="btn" href="${r.url}">Open recept</a>`;
-        grid.appendChild(el);
+    }
+
+    function openDetail(id){
+      const r = state.all.find(x => x.id === id);
+      if(!r) return;
+      state.view = 'detail';
+      history.pushState({id}, '', `#/${id}`);
+      const dv = document.getElementById('detailView');
+      dv.innerHTML = `
+        <a class="back link" href="#" onclick="return backToList()">← Terug</a>
+        <h2 class="title">${r.title}</h2>
+        <div class="meta" style="margin:8px 0 14px">
+          ${r.category?`<span class=\"pill\">${r.category}</span>`:''}
+          <span class="pill kcal">${r.kcal} kcal</span>
+          ${r.servings?`<span class=\"pill\">${r.servings} porties</span>`:''}
+          ${r.time?`<span class=\"pill\">${r.time} min</span>`:''}
+        </div>
+        <div class="macros">
+          <span class="badge">Eiwit: ${r.macros?.protein ?? 0} g</span>
+          <span class="badge">Koolhydraten: ${r.macros?.carbs ?? 0} g</span>
+          <span class="badge">Vetten: ${r.macros?.fat ?? 0} g</span>
+        </div>
+        <div class="section">
+          <h3>Ingrediënten</h3>
+          <ul>${(r.ingredients||[]).map(i=>`<li>${i}</li>`).join('')}</ul>
+        </div>
+        <div class="section">
+          <h3>Stappen</h3>
+          <ol>${(r.steps||[]).map(s=>`<li>${s}</li>`).join('')}</ol>
+        </div>
+        ${r.tags?.length?`<div class="section"><h3>Tags</h3><div class="meta">${r.tags.map(t=>`<span class=\"pill\">${t}</span>`).join('')}</div></div>`:''}
+      `;
+      document.getElementById('listView').hidden = true;
+      dv.hidden = false;
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    function backToList(){
+      state.view = 'list';
+      document.getElementById('detailView').hidden = true;
+      document.getElementById('listView').hidden = false;
+      history.pushState({}, '', '#/');
+      return false;
+    }
+
+    function syncControls(){
+      $('#q').value = state.query; $('#cat').value = state.cat; $('#sort').value = state.sort;
+      renderList(applyFilters(state.all));
+    }
+
+    function attachUI(){
+      $('#q').addEventListener('input', e=>{ state.query = e.target.value; syncControls() });
+      $('#cat').addEventListener('change', e=>{ state.cat = e.target.value; syncControls() });
+      $('#sort').addEventListener('change', e=>{ state.sort = e.target.value; syncControls() });
+      window.addEventListener('popstate', ()=>{
+        const hash = location.hash.replace('#/','');
+        if(!hash){ backToList(); return }
+        openDetail(hash);
       });
     }
 
-    document.getElementById('q').addEventListener('input',e=>{state.q=e.target.value;renderGrid();});
-    document.getElementById('clear').addEventListener('click',()=>{state.q="";document.getElementById('q').value="";renderGrid();});
-
-    renderChips();
-    loadData().then(d=>{ state.data=d; renderGrid(); });
+    (async function init(){
+      document.getElementById('year').textContent = new Date().getFullYear();
+      attachUI();
+      state.all = await loadData();
+      syncControls();
+      const hash = location.hash.replace('#/','');
+      if(hash){ openDetail(hash) }
+    })();
   </script>
+
+  <!-- Fallback data zodat de site werkt vóór recipes.json bestaat -->
+  <script id="recipes-fallback" type="application/json">[
+    {"id":"skyr-bowl","title":"Volle kwark bowl met fruit","category":"ontbijt","kcal":480,"macros":{"protein":35,"carbs":52,"fat":15},"servings":1,"time":5,"image":"","tags":["kwark","fruit","makkelijk"],"ingredients":["500 g volle kwark","100 g aardbeien","30 g muesli"],"steps":["Alles in een kom, klaar."]}
+  ]</script>
 </body>
 </html>
