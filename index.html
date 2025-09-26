@@ -3,20 +3,37 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Macromasters — Recepten met macro's</title>
+  <title>Macromasters — Recepten, macro's & calorie rekenmachine</title>
   <style>
-    :root{--bg:#0b0c10;--card:#12131a;--muted:#a3a3a3;--text:#f5f5f5;--acc:#0BDBE1;--ok:#22c55e;--warn:#f59e0b}
-    *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;background:linear-gradient(180deg,#0b0c10, #111218);color:var(--text)}
-    header{position:sticky;top:0;z-index:10;background:rgba(11,12,16,.8);backdrop-filter:blur(8px);border-bottom:1px solid #1f2430}
-    .wrap{max-width:1100px;margin:0 auto;padding:20px}
+    :root{
+      --bg:#0b0c10;--card:#12131a;--muted:#a3a3a3;--text:#f5f5f5;--acc:#0BDBE1;--ok:#22c55e;--warn:#f59e0b;--border:#1e2230
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;background:linear-gradient(180deg,#0b0c10,#111218);color:var(--text)}
+    a{color:inherit}
+    header{position:sticky;top:0;z-index:10;background:rgba(11,12,16,.8);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+    .wrap{max-width:1100px;margin:0 auto;padding:18px 20px}
+    .brand{display:flex;gap:12px;align-items:center;justify-content:space-between}
     h1{margin:0;font-weight:800;letter-spacing:.3px}
-    .sub{color:var(--muted);margin-top:6px}
-    .toolbar{display:grid;grid-template-columns:1fr 180px 160px;gap:10px;margin-top:14px}
+    .nav{display:flex;gap:8px}
+    .btn{all:unset;cursor:pointer;padding:10px 14px;border-radius:999px;border:1px solid #283047;background:#0f1117}
+    .btn.acc{border-color:#11434b;color:var(--acc)}
+
+    .hero{padding:36px 20px 8px;background:linear-gradient(180deg,rgba(11,219,225,.06),transparent)}
+    .hero .wrap{display:grid;grid-template-columns:1.2fr .8fr;gap:24px}
+    .hero h2{font-size:32px;margin:0 0 8px}
+    .sub{color:var(--muted);margin:6px 0}
+    .cta{display:flex;gap:10px;margin-top:12px}
+
+    main{max-width:1100px;margin:0 auto;padding:0 20px}
+
+    /* toolbar + list */
+    .toolbar{display:grid;grid-template-columns:1fr 180px 160px;gap:10px;margin:16px 0}
     input,select{background:#0f1117;border:1px solid #242938;color:var(--text);padding:12px 14px;border-radius:12px;outline:none}
     input::placeholder{color:#80859b}
-    main{max-width:1100px;margin:18px auto;padding:0 20px}
+
     .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
-    .card{grid-column:span 4;background:var(--card);border:1px solid #1e2230;border-radius:16px;overflow:hidden;transition:transform .12s ease, box-shadow .12s ease}
+    .card{grid-column:span 4;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:transform .12s ease, box-shadow .12s ease}
     .card:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.35)}
     .thumb{aspect-ratio:16/9;background:#0f1117;display:flex;align-items:center;justify-content:center;color:#6b7280;font-size:12px}
     .pad{padding:14px}
@@ -28,20 +45,75 @@
     .badge{font-size:12px;padding:6px 8px;border-radius:10px;background:#0f1117;border:1px solid #283047}
     .link{all:unset;cursor:pointer}
     .empty{color:var(--muted);text-align:center;padding:40px}
+
+    /* detail */
     .detail{max-width:900px;margin:0 auto}
     .back{display:inline-block;margin:0 0 14px 0}
     .section{margin:18px 0}
     ul{margin:8px 0 0 18px}
-    .footer{color:#8b91a3;text-align:center;padding:30px 0;border-top:1px solid #1e2230;margin-top:28px}
-    @media (max-width:960px){.card{grid-column:span 6}.toolbar{grid-template-columns:1fr 1fr}.hide-sm{display:none}}
+
+    /* calculator */
+    .calc{max-width:900px;margin:0 auto}
+    .calc .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .calc .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px}
+    .calc h3{margin:0 0 10px}
+    .calc label{font-size:14px;color:#cfd3df}
+    .out{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+    .num{font-weight:800;font-size:22px}
+
+    .footer{color:#8b91a3;text-align:center;padding:30px 0;border-top:1px solid var(--border);margin-top:28px}
+
+    @media (max-width:960px){
+      .card{grid-column:span 6}
+      .toolbar{grid-template-columns:1fr 1fr}
+      .hero .wrap{grid-template-columns:1fr}
+      .hide-sm{display:none}
+      .calc .grid2{grid-template-columns:1fr}
+      .calc .row{grid-template-columns:1fr}
+    }
     @media (max-width:640px){.card{grid-column:span 12}}
   </style>
 </head>
 <body>
   <header>
+    <div class="wrap brand">
+      <div>
+        <h1>Macromasters</h1>
+        <div class="sub">Recepten met kcal & macro's. Zoek, filter, open details.</div>
+      </div>
+      <nav class="nav">
+        <button id="navRecipes" class="btn">Recepten</button>
+        <button id="navCalc" class="btn acc">Calorie rekenmachine</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
     <div class="wrap">
-      <h1>Macromasters</h1>
-      <div class="sub">Recepten met kcal & macro's. Zoek, filter, open details.</div>
+      <div>
+        <h2>Grip op je voeding — zonder gedoe</h2>
+        <p class="sub">Bekijk recepten met directe macro's of bereken je onderhoud & macroverdeling. Alles op één plek.</p>
+        <div class="cta">
+          <a href="#" id="ctaRecipes" class="btn">🔎 Bekijk recepten</a>
+          <a href="#" id="ctaCalc" class="btn acc">⚡ Reken mijn calorieën uit</a>
+        </div>
+      </div>
+      <div class="panel hide-sm">
+        <div style="font-weight:700;margin-bottom:8px">Snel overzicht</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+          <div class="pill kcal" style="text-align:center">Macro's per recept</div>
+          <div class="pill" style="text-align:center">Zoek & filter</div>
+          <div class="pill" style="text-align:center">Detail met ingrediënten</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <!-- LIST VIEW -->
+    <div id="listView" class="wrap" aria-live="polite">
       <div class="toolbar">
         <input id="q" type="search" placeholder="Zoek op titel, ingrediënt, tag… (bijv. 'kip', 'pasta')" />
         <select id="cat">
@@ -60,98 +132,99 @@
           <option value="fat-desc">Vetten ↓</option>
         </select>
       </div>
-    </div>
-  </header>
-
-  <main>
-    <div id="listView" class="wrap">
-      <div id="recipes" class="grid" aria-live="polite"></div>
+      <div id="recipes" class="grid"></div>
       <div id="empty" class="empty" hidden>Geen resultaten. Pas je zoekopdracht of filters aan.</div>
     </div>
 
+    <!-- DETAIL VIEW -->
     <div id="detailView" class="wrap detail" hidden></div>
+
+    <!-- CALCULATOR VIEW -->
+    <div id="calcView" class="wrap calc" hidden>
+      <div class="panel">
+        <h3>Calorie & macro rekenmachine</h3>
+        <div class="grid2">
+          <div class="panel">
+            <div class="row">
+              <label>Geslacht
+                <select id="sex"><option value="m">Man</option><option value="f">Vrouw</option></select>
+              </label>
+              <label>Leeftijd
+                <input id="age" type="number" min="10" max="100" value="25" />
+              </label>
+            </div>
+            <div class="row">
+              <label>Lengte (cm)
+                <input id="height" type="number" min="120" max="230" value="180" />
+              </label>
+              <label>Gewicht (kg)
+                <input id="weight" type="number" min="30" max="250" value="80" />
+              </label>
+            </div>
+            <label>Activiteit
+              <select id="activity">
+                <option value="1.2">Zittend (weinig/geen sport)</option>
+                <option value="1.375">Licht actief (1–3x p/w)</option>
+                <option value="1.55" selected>Gemiddeld actief (3–5x p/w)</option>
+                <option value="1.725">Zeer actief (6–7x p/w)</option>
+                <option value="1.9">Extreem actief (2x/dag)</option>
+              </select>
+            </label>
+            <label style="display:block;margin-top:10px">Doel
+              <select id="goal">
+                <option value="0">Onderhoud</option>
+                <option value="-0.1">Cut −10%</option>
+                <option value="-0.2">Cut −20%</option>
+                <option value="0.1">Bulk +10%</option>
+                <option value="0.2">Bulk +20%</option>
+              </select>
+            </label>
+            <label style="display:block;margin-top:10px">Macro verdeling
+              <select id="split">
+                <option value="30,40,30">30% P / 40% KH / 30% V</option>
+                <option value="25,50,25">25 / 50 / 25</option>
+                <option value="20,60,20">20 / 60 / 20</option>
+                <option value="35,45,20">35 / 45 / 20</option>
+              </select>
+            </label>
+            <div class="cta" style="margin-top:12px"><button id="calcBtn" class="btn acc">Bereken</button></div>
+          </div>
+          <div class="panel">
+            <div>Resultaat</div>
+            <div class="out">
+              <div><div class="muted">BMR</div><div id="outBmr" class="num">—</div></div>
+              <div><div class="muted">Onderhoud</div><div id="outTdee" class="num">—</div></div>
+              <div><div class="muted">Doel kcal</div><div id="outKcal" class="num">—</div></div>
+            </div>
+            <div style="margin-top:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+              <div class="panel"><div>P (g)</div><div id="outP" class="num">—</div></div>
+              <div class="panel"><div>KH (g)</div><div id="outC" class="num">—</div></div>
+              <div class="panel"><div>V (g)</div><div id="outF" class="num">—</div></div>
+            </div>
+            <div class="sub" style="margin-top:10px">* BMR via Mifflin‑St Jeor. P=4 kcal/g, KH=4 kcal/g, V=9 kcal/g.</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 
   <div class="footer">© <span id="year"></span> Macromasters — gebouwd voor snelle macro‑checks.</div>
 
-  <!--
-  📁 Plaats deze bestanden in de **root** van je repo (zelfde map):
-  - index.html (dit bestand)
-  - recipes.json  ← BELANGRIJK: exact zo genaamd, zelfde map
-
-  🔧 Voorbeeld recipes.json (plak dit in een nieuw bestand recipes.json):
-  [
-    {
-      "id": "chicken-teriyaki-rice",
-      "title": "Chicken Teriyaki Rice (suikervrij)",
-      "category": "diner",
-      "kcal": 620,
-      "macros": {"protein": 52, "carbs": 78, "fat": 14},
-      "servings": 1,
-      "time": 20,
-      "image": "",
-      "tags": ["rijst","kip","teriyaki","high-protein"],
-      "ingredients": [
-        "150 g kipfilet",
-        "200 g gekookte jasmijnrijst",
-        "150 g broccoli",
-        "15 ml sojasaus (normaal)",
-        "10 ml mirin 0% suiker of water",
-        "5 ml sesamolie"
-      ],
-      "steps": [
-        "Bak kip goudbruin, voeg broccoli toe.",
-        "Roer sojasaus + mirin/water + sesamolie erdoor.",
-        "Serveren op rijst."
-      ]
-    },
-    {
-      "id": "skyr-bowl",
-      "title": "Volle kwark bowl met fruit",
-      "category": "ontbijt",
-      "kcal": 480,
-      "macros": {"protein": 35, "carbs": 52, "fat": 15},
-      "servings": 1,
-      "time": 5,
-      "image": "",
-      "tags": ["kwark","fruit","makkelijk"],
-      "ingredients": [
-        "500 g volle kwark",
-        "100 g aardbeien",
-        "30 g muesli"
-      ],
-      "steps": ["Alles in een kom, klaar."]
-    }
-  ]
-
-  🧪 Test-lokaal: open index.html dubbelklik (fetch werkt ook via file:// in moderne browsers). Op GitHub Pages werkt fetch standaard zolang recipes.json in dezelfde map staat.
-  -->
-
   <script>
     const $ = (q, el=document) => el.querySelector(q);
-    const $$ = (q, el=document) => [...el.querySelectorAll(q)];
+    const state = { all: [], view: 'list', query: '', cat: '', sort: '' };
 
-    const state = {
-      all: [],
-      view: 'list', // 'list' | 'detail'
-      query: '',
-      cat: '',
-      sort: ''
-    };
-
-    function slugify(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')}
+    function slugify(s){return (s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')}
 
     async function loadData(){
       try{
-        // Cache-bust tijdens testen
         const res = await fetch('./recipes.json?cb=' + Date.now());
         if(!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
         if(!Array.isArray(data)) throw new Error('recipes.json moet een array zijn');
         return data.map(r => ({...r, id: r.id || slugify(r.title)}));
       }catch(err){
-        console.warn('Kon recipes.json niet laden, val terug op inline data. Fout:', err.message);
-        // Fallback inline (zodat de pagina werkt ook als JSON nog niet staat)
+        console.warn('Kon recipes.json niet laden, fallback gebruikt:', err.message);
         return JSON.parse(document.getElementById('recipes-fallback').textContent);
       }
     }
@@ -159,13 +232,7 @@
     function applyFilters(list){
       let out = list;
       const q = state.query.trim().toLowerCase();
-      if(q){
-        out = out.filter(r => (
-          (r.title||'').toLowerCase().includes(q) ||
-          (r.tags||[]).join(' ').toLowerCase().includes(q) ||
-          (r.ingredients||[]).join(' ').toLowerCase().includes(q)
-        ));
-      }
+      if(q){ out = out.filter(r => (r.title||'').toLowerCase().includes(q) || (r.tags||[]).join(' ').toLowerCase().includes(q) || (r.ingredients||[]).join(' ').toLowerCase().includes(q)); }
       if(state.cat){ out = out.filter(r => (r.category||'').toLowerCase() === state.cat) }
       switch(state.sort){
         case 'kcal-asc': out = out.slice().sort((a,b)=>a.kcal-b.kcal); break;
@@ -207,10 +274,16 @@
       }
     }
 
+    function showView(v){
+      state.view = v;
+      $('#listView').hidden = v !== 'list';
+      $('#detailView').hidden = v !== 'detail';
+      $('#calcView').hidden = v !== 'calc';
+    }
+
     function openDetail(id){
       const r = state.all.find(x => x.id === id);
       if(!r) return;
-      state.view = 'detail';
       history.pushState({id}, '', `#/${id}`);
       const dv = document.getElementById('detailView');
       dv.innerHTML = `
@@ -237,18 +310,11 @@
         </div>
         ${r.tags?.length?`<div class="section"><h3>Tags</h3><div class="meta">${r.tags.map(t=>`<span class=\"pill\">${t}</span>`).join('')}</div></div>`:''}
       `;
-      document.getElementById('listView').hidden = true;
-      dv.hidden = false;
+      showView('detail');
       window.scrollTo({top:0,behavior:'smooth'});
     }
 
-    function backToList(){
-      state.view = 'list';
-      document.getElementById('detailView').hidden = true;
-      document.getElementById('listView').hidden = false;
-      history.pushState({}, '', '#/');
-      return false;
-    }
+    function backToList(){ history.pushState({}, '', '#/'); showView('list'); return false }
 
     function syncControls(){
       $('#q').value = state.query; $('#cat').value = state.cat; $('#sort').value = state.sort;
@@ -264,6 +330,30 @@
         if(!hash){ backToList(); return }
         openDetail(hash);
       });
+      // nav/cta
+      $('#navRecipes').addEventListener('click',()=>{ showView('list'); window.scrollTo({top:document.querySelector('#listView').offsetTop - 60, behavior:'smooth'}); });
+      $('#navCalc').addEventListener('click',()=>{ showView('calc'); window.location.hash = '#/calc'; });
+      $('#ctaRecipes').addEventListener('click',(e)=>{ e.preventDefault(); showView('list'); window.scrollTo({top:document.querySelector('#listView').offsetTop - 60, behavior:'smooth'}); });
+      $('#ctaCalc').addEventListener('click',(e)=>{ e.preventDefault(); showView('calc'); window.location.hash = '#/calc'; });
+      $('#calcBtn').addEventListener('click', calc);
+    }
+
+    function calc(){
+      const sex=$('#sex').value, age=+$('#age').value, h=+$('#height').value, w=+$('#weight').value, act=+$('#activity').value, goal=+$('#goal').value;
+      // Mifflin-St Jeor
+      let bmr = sex==='m' ? (10*w + 6.25*h - 5*age + 5) : (10*w + 6.25*h - 5*age - 161);
+      const tdee = Math.round(bmr * act);
+      const kcal = Math.round(tdee * (1+goal));
+      const [pPct,cPct,fPct] = $('#split').value.split(',').map(Number);
+      const p = Math.round((kcal * (pPct/100)) / 4);
+      const c = Math.round((kcal * (cPct/100)) / 4);
+      const f = Math.round((kcal * (fPct/100)) / 9);
+      $('#outBmr').textContent = Math.round(bmr);
+      $('#outTdee').textContent = tdee;
+      $('#outKcal').textContent = kcal;
+      $('#outP').textContent = p;
+      $('#outC').textContent = c;
+      $('#outF').textContent = f;
     }
 
     (async function init(){
@@ -272,13 +362,16 @@
       state.all = await loadData();
       syncControls();
       const hash = location.hash.replace('#/','');
-      if(hash){ openDetail(hash) }
+      if(hash==='calc'){ showView('calc') }
+      else if(hash){ openDetail(hash) }
+      else { showView('list') }
     })();
   </script>
 
   <!-- Fallback data zodat de site werkt vóór recipes.json bestaat -->
   <script id="recipes-fallback" type="application/json">[
-    {"id":"skyr-bowl","title":"Volle kwark bowl met fruit","category":"ontbijt","kcal":480,"macros":{"protein":35,"carbs":52,"fat":15},"servings":1,"time":5,"image":"","tags":["kwark","fruit","makkelijk"],"ingredients":["500 g volle kwark","100 g aardbeien","30 g muesli"],"steps":["Alles in een kom, klaar."]}
+    {"id":"skyr-bowl","title":"Volle kwark bowl met fruit","category":"ontbijt","kcal":480,"macros":{"protein":35,"carbs":52,"fat":15},"servings":1,"time":5,"image":"","tags":["kwark","fruit","makkelijk"],"ingredients":["500 g volle kwark","100 g aardbeien","30 g muesli"],"steps":["Alles in een kom, klaar."]},
+    {"id":"chicken-teriyaki-rice","title":"Chicken Teriyaki Rice","category":"diner","kcal":620,"macros":{"protein":52,"carbs":78,"fat":14},"servings":1,"time":20,"image":"","tags":["rijst","kip","teriyaki"],"ingredients":["150 g kipfilet","200 g rijst","150 g broccoli"],"steps":["Bak kip","Voeg broccoli toe","Serveer met rijst"]}
   ]</script>
 </body>
 </html>
