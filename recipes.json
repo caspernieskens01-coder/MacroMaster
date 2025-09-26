@@ -1,18 +1,28 @@
 [
   {
-    "id": "beef-teriyaki",
-    "title": "Beef Teriyaki",
-    "blurb": "Suikervrij, zonder binders. Glans door reductie. Sojasaus, gember, knoflook.",
-    "url": "recipes/beef-teriyaki.html",
-    "tags": ["vlees", "rijst"],
-    "ingredients": ["rund", "sojasaus", "gember", "knoflook", "sesamolie", "rijstazijn", "water"]
+    "id": "chicken-teriyaki-rice",
+    "title": "Chicken Teriyaki Rice",
+    "category": "diner",
+    "kcal": 620,
+    "macros": { "protein": 52, "carbs": 78, "fat": 14 },
+    "servings": 1,
+    "time": 20,
+    "image": "",
+    "tags": ["rijst","kip","teriyaki"],
+    "ingredients": ["150 g kipfilet","200 g rijst","150 g broccoli"],
+    "steps": ["Bak kip","Voeg broccoli toe","Serveer met rijst"]
   },
   {
-    "id": "kip-rijst-groente",
-    "title": "Kip • Rijst • Groente",
-    "blurb": "Basis fitness recept; stel g/pp in en schaal porties + macro's.",
-    "url": "recipes/kip-rijst-groente.html",
-    "tags": ["kip", "rijst"],
-    "ingredients": ["kip", "rijst", "broccoli", "olijfolie"]
+    "id": "skyr-bowl",
+    "title": "Volle kwark bowl met fruit",
+    "category": "ontbijt",
+    "kcal": 480,
+    "macros": { "protein": 35, "carbs": 52, "fat": 15 },
+    "servings": 1,
+    "time": 5,
+    "image": "",
+    "tags": ["kwark","fruit","makkelijk"],
+    "ingredients": ["500 g volle kwark","100 g aardbeien","30 g muesli"],
+    "steps": ["Alles in een kom, klaar."]
   }
 ]
