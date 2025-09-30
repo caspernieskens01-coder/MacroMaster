@@ -4,27 +4,17 @@
     "title": "Beef Teriyaki",
     "subtitle": "Suikervrij, zonder binders. Glans door reductie. Sojasaus, gember, knoflook.",
     "tags": ["vlees", "rijst"],
-    "params": {
-      "servings": 4,
-      "meat_g": 100,
-      "rice_g_dry": 80,
-      "veg_g": 200,
-      "water_ml_total": 20
-    },
-    "model": "beef_teriyaki"
+    "params": { "servings": 4, "meat_g": 100, "rice_g_dry": 80, "veg_g": 200, "water_ml_total": 20 },
+    "model": "beef_teriyaki",
+    "image": ""
   },
   {
     "id": "kip-rijst-groente",
     "title": "Kip • Rijst • Groente",
     "subtitle": "Basis fitness recept; stel g/pp in en schaal porties + macro's.",
     "tags": ["kip", "rijst"],
-    "params": {
-      "servings": 4,
-      "meat_g": 120,
-      "rice_g_dry": 75,
-      "veg_g": 200,
-      "water_ml_total": 0
-    },
-    "model": "chicken_rice_veg"
+    "params": { "servings": 4, "meat_g": 120, "rice_g_dry": 75, "veg_g": 200, "water_ml_total": 0 },
+    "model": "chicken_rice_veg",
+    "image": ""
   }
 ]
