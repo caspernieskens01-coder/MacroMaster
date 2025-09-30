@@ -196,7 +196,7 @@
     const state = { all: [], view:'list', current:null, query:'', cat:'', sort:'' };
     function slugify(s){return (s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')}
 
-    async function loadData(){
+    const res = await fetch('./recipes.json?cb=' + Date.now());
       try{ const r = await fetch('./recipes.json?cb='+Date.now()); if(!r.ok) throw new Error(r.status); const data = await r.json(); return data.map(x=>({...x,id:x.id||slugify(x.title)})); }
       catch(e){ console.warn('fallback json omdat recipes.json niet laadt', e); return [ { id:'beef-teriyaki', title:'Beef Teriyaki', subtitle:'Suikervrij, zonder binders. Glans door reductie. Sojasaus, gember, knoflook.', tags:['vlees','rijst'], params:{servings:4, meat_g:100, rice_g_dry:80, veg_g:200, water_ml_total:20}, model:'beef_teriyaki' }, { id:'kip-rijst-groente', title:'Kip • Rijst • Groente', subtitle:'Basis fitness recept; stel g/pp in en schaal porties + macro\'s.', tags:['kip','rijst'], params:{servings:4, meat_g:120, rice_g_dry:75, veg_g:200, water_ml_total:0}, model:'chicken_rice_veg' } ]; }
     }
@@ -230,7 +230,28 @@
     function calcAndRender(){ const s=+$('#inServ').value, meat=+$('#inMeat').value, rice=+$('#inRice').value, veg=+$('#inVeg').value, wml=+$('#inWater').value; const r=state.current; let rows=[]; if(r.model==='beef_teriyaki'){ rows=[ ingr('Rundereepjes (rauw)', s*meat,'g',NUTRIENTS.beef_raw), ingr('Witte rijst (droog)', s*rice,'g',NUTRIENTS.rice_dry), ingr('Broccoli (rauw)', s*veg,'g',NUTRIENTS.broccoli_raw), ingr('Neutrale olie', 10,'g',NUTRIENTS.oil), ingr('Sojasaus',80,'ml',NUTRIENTS.soy_sauce_ml), ingr('Rijstazijn',30,'ml',NUTRIENTS.rice_vinegar_ml), ingr('Sesamolie',5,'g',NUTRIENTS.sesame_oil), ingr('Knoflook',6,'g',NUTRIENTS.garlic), ingr('Gember',20,'g',NUTRIENTS.ginger), ingr('Water',wml,'ml',NUTRIENTS.water) ]; $('#steps').innerHTML=`<ol style="margin:0 0 0 18px;padding:12px"><li><b>Marineren (15–60 min)</b>: Sojasaus, rijstazijn, sesamolie, knoflook, gember. 2 el apart. Rest over vlees.</li><li><b>Bakken</b>: Vlees droog, pan heet met 1 el olie. In batches 1–2 min bruin.</li><li><b>Inkoken</b>: Marinade 2–3 min hard koken tot stroperig.</li><li><b>Afmaken</b>: Vlees terug, 20–30 s omscheppen. Eventueel 1–2 el water voor dun glazuur.</li></ol>`; } else { rows=[ ingr('Kipfilet (rauw)', s*meat,'g',NUTRIENTS.chicken_raw), ingr('Witte rijst (droog)', s*rice,'g',NUTRIENTS.rice_dry), ingr('Groentemix (rauw)', s*veg,'g',NUTRIENTS.veg_mix), ingr('Olijfolie',8,'g',NUTRIENTS.oil), ingr('Kruiden/zout',2,'g',NUTRIENTS.water) ]; $('#steps').innerHTML=`<ol style="margin:0 0 0 18px;padding:12px"><li>Kip kruiden en bakken.</li><li>Rijst koken (droog gewogen).</li><li>Groente roerbakken; alles samen serveren.</li></ol>`; }
       const tb=$('#tbl tbody'); tb.innerHTML=''; let TP=0,TC=0,TF=0,TK=0,TQ=0; for(const row of rows){ const tr=document.createElement('tr'); tr.innerHTML=`<td>${row.n}</td><td>${fmt(row.qty)} ${row.unit}</td><td>${fmt(row.p)}</td><td>${fmt(row.c)}</td><td>${fmt(row.f)}</td><td>${fmt(row.k)}</td>`; tb.appendChild(tr); TP+=row.p; TC+=row.c; TF+=row.f; TK+=row.k; TQ+=row.qty; } $('#tQty').textContent=fmt(TQ)+' g/ml'; $('#tP').textContent=fmt(TP); $('#tC').textContent=fmt(TC); $('#tF').textContent=fmt(TF); $('#tK').textContent=fmt(TK); $('#sP').textContent=fmt(TP); $('#sC').textContent=fmt(TC); $('#sF').textContent=fmt(TF); $('#sK').textContent=fmt(TK); }
 
-    (async function init(){ document.getElementById('year').textContent = new Date().getFullYear(); state.all = await loadData(); renderCards(state.all); const hash=location.hash.replace('#/',''); if(hash){ openDetail(hash) } window.addEventListener('popstate', ()=>{ const h=location.hash.replace('#/',''); if(h) openDetail(h); else backToList(); }); })();
-  </script>
-</body>
-</html>
+   <script>
+  (async function init(){
+    try {
+      document.getElementById('year').textContent = new Date().getFullYear();
+      state.all = await loadData();                 // leest ./recipes.json
+      renderCards(applyFilters(state.all));
+      const hash = location.hash.replace('#/','');
+      if (hash) openDetail(hash);
+
+      window.addEventListener('popstate', ()=>{
+        const h = location.hash.replace('#/','');
+        if (h) openDetail(h); else backToList();
+      });
+    } catch (err) {
+      console.error('Fout tijdens init:', err);
+      const cards = document.getElementById('cards');
+      if (cards) cards.innerHTML =
+        `<div class="panel" style="grid-column:1/-1">
+           <strong>Kon de pagina niet volledig laden.</strong><br>
+           <small>Details in console. Probeer refresh (Ctrl/⌘+Shift+R).</small>
+         </div>`;
+    }
+  })();
+</script>
+
