@@ -4,44 +4,60 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MACROMASTER — Recepten + per‑recept macro‑calculator</title>
+  <meta name="theme-color" content="#0BDBE1" />
+  <link rel="icon" href="/img/favicon.png" />
   <style>
     :root{
-      --bg:#070a0c;--card:#11161a;--muted:#a3a3a3;--text:#eaf2f7;--acc:#0BDBE1;--chip:#0e151a;--border:#222b33
+      --bg:#070a0c;--card:#0f1418;--muted:#a3a3a3;--text:#eaf2f7;--acc:#0BDBE1;--chip:#0b1216;--border:#1d242b;
+      --radius:18px;--radius-sm:12px;--shadow:0 8px 30px rgba(0,0,0,.25)
     }
     *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial;background:var(--bg);color:var(--text)}
-    .wrap{max-width:1100px;margin:0 auto;padding:20px}
-    header{position:sticky;top:0;z-index:10;background:rgba(7,10,12,.9);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
-    .brand{display:flex;align-items:center;justify-content:space-between;gap:10px}
-    .brand h1{margin:0;font-weight:900;letter-spacing:.6px}
-    .by{font-size:12px;color:#7aa0ab}
-    .row{display:flex;gap:10px;align-items:center}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:radial-gradient(1200px 500px at 10% -10%,rgba(11,219,225,.08),transparent),var(--bg);color:var(--text)}
+    img{display:block;max-width:100%}
+    .wrap{max-width:1040px;margin:0 auto;padding:20px}
 
-    /* top controls */
-    .search{width:100%;background:#0e181f;border:1px solid #1e2a33;color:var(--text);padding:14px 16px;border-radius:14px;outline:none}
-    .pillbar{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 6px}
-    .pill{padding:8px 12px;background:var(--chip);border:1px solid #1a242c;border-radius:999px;color:#b4d3dc;font-size:13px}
-    .btn{all:unset;background:var(--acc);color:#03242a;font-weight:800;border-radius:12px;padding:10px 14px;cursor:pointer}
-    .btn.ghost{background:#0e181f;color:#9adfe4;border:1px solid #0f2a30}
-    .tag{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid #1a242c;border-radius:999px;background:#0e151a;color:#cde9ee;font-size:12px}
+    /* header */
+    header{position:sticky;top:0;z-index:10;background:rgba(7,10,12,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+    .brand{display:flex;align-items:center;justify-content:space-between;gap:14px}
+    .brand-left{display:flex;align-items:center;gap:10px}
+    .logo{height:28px;width:auto;filter:drop-shadow(0 2px 6px rgba(11,219,225,.2))}
+    .title{font-weight:900;letter-spacing:.4px;margin:0}
+    .by{font-size:12px;color:#7aa0ab;margin-top:2px}
+    .nav{display:flex;gap:10px}
+    .chip{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--border);border-radius:999px;background:var(--chip);color:#cfe3e8;font-size:12px}
+    .btn{all:unset;cursor:pointer;padding:10px 16px;border-radius:999px;border:1px solid #0f2a30;background:#0e181f;color:#9adfe4}
+    .btn.acc{background:var(--acc);color:#03242a;font-weight:800;border-color:transparent}
 
-    /* cards */
-    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px;margin-top:12px}
-    .card{grid-column:span 6;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+    /* hero */
+    .hero{padding:28px 0 8px}
+    .hero h2{font-size:36px;line-height:1.1;margin:0 0 8px}
+    .sub{color:#b7c8cf;margin:6px 0 14px}
+    .cta{display:flex;gap:10px;flex-wrap:wrap}
+
+    /* search + grid */
+    .searchbar{display:grid;grid-template-columns:1fr 180px 160px;gap:10px;margin:18px 0}
+    .input,select{background:#0e181f;border:1px solid #1e2a33;color:var(--text);padding:12px 14px;border-radius:var(--radius-sm);outline:none}
+    .input::placeholder{color:#819aa4}
+
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}
+    .card{grid-column:span 6;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);transition:transform .12s ease}
+    .card:hover{transform:translateY(-2px)}
+    .thumb{aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#0b1216;margin-bottom:12px}
     .card h3{margin:0 0 6px}
-    .card .desc{color:#b7c8cf;margin:4px 0 10px}
-    .card .tagbar{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
-    .card .open{display:block;margin-top:8px}
+    .desc{color:#b7c8cf;margin:0 0 10px}
+    .tagbar{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
+    .pill{padding:6px 10px;background:var(--chip);border:1px solid var(--border);border-radius:999px;color:#cfe3e8;font-size:12px}
+    .open{margin-top:auto}
 
     /* detail */
     .back{display:inline-block;margin:0 0 16px;color:#9adfe4}
-    .title{font-size:36px;font-weight:900;margin:6px 0}
+    .h1{font-size:34px;font-weight:900;margin:6px 0}
     .subtitle{color:#b7c8cf;margin-bottom:14px}
-    .two{display:grid;grid-template-columns:1.1fr .9fr;gap:20px}
-    .panel{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px}
+    .two{display:grid;grid-template-columns:1.08fr .92fr;gap:20px}
+    .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
     .inputs{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
-    .inputs label{display:block;font-size:13px;color:#cfe3e8;margin-bottom:6px}
-    .in{width:100%;padding:12px 12px;border-radius:12px;border:1px solid #24343f;background:#0f171c;color:var(--text)}
+    .label{display:block;font-size:13px;color:#cfe3e8;margin-bottom:6px}
+    .in{width:100%;padding:12px 12px;border-radius:var(--radius-sm);border:1px solid #24343f;background:#0f171c;color:var(--text)}
     .apply{margin-top:4px}
     table{width:100%;border-collapse:collapse}
     th,td{padding:10px;border-bottom:1px solid #1d2931}
@@ -49,79 +65,99 @@
     tfoot td{font-weight:800;border-top:1px solid #2a3942}
 
     .summary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .chip{background:#0f171c;border:1px solid #1e2a33;border-radius:16px;padding:12px;text-align:center}
-    .chip .num{font-size:22px;font-weight:900}
+    .chipbox{background:#0f171c;border:1px solid #1e2a33;border-radius:16px;padding:12px;text-align:center}
+    .num{font-size:22px;font-weight:900}
 
-    @media (max-width:980px){.two{grid-template-columns:1fr}.inputs{grid-template-columns:repeat(2,1fr)}}
-    @media (max-width:640px){.card{grid-column:span 12}.inputs{grid-template-columns:1fr}}
+    .footer{color:#8b91a3;text-align:center;padding:28px 0;border-top:1px solid var(--border);margin-top:28px}
+
+    @media (max-width:980px){
+      .searchbar{grid-template-columns:1fr 1fr}
+      .two{grid-template-columns:1fr}
+      .inputs{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:640px){
+      .grid{gap:14px}
+      .card{grid-column:span 12}
+      .inputs{grid-template-columns:1fr}
+    }
   </style>
 </head>
 <body>
   <header>
     <div class="wrap brand">
-      <div>
-        <div class="by">by CASPER PT</div>
-        <h1>MACROMASTER</h1>
+      <div class="brand-left">
+        <img class="logo" src="/img/logo.svg" alt="Macromaster logo" onerror="this.src='/img/logo.png'">
+        <div>
+          <h1 class="title">MACROMASTER</h1>
+          <div class="by">by CASPER PT</div>
+        </div>
       </div>
-      <div class="row">
-        <span id="jsonStatus" class="tag">🔎 JSON‑gestuurd</span>
-        <button id="clearBtn" class="btn ghost">Wissen</button>
-      </div>
+      <nav class="nav">
+        <button id="navRecipes" class="btn">Recepten</button>
+        <button id="navCalc" class="btn acc">Calorie rekenmachine</button>
+      </nav>
     </div>
   </header>
 
+  <section class="hero">
+    <div class="wrap">
+      <h2>Grip op je voeding — zonder gedoe</h2>
+      <p class="sub">Recepten met directe macro's of bereken je onderhoud & macroverdeling. Clean, snel, on‑brand.</p>
+      <div class="cta">
+        <a href="#" id="ctaRecipes" class="btn">🔎 Bekijk recepten</a>
+        <a href="#" id="ctaCalc" class="btn acc">⚡ Reken mijn calorieën uit</a>
+      </div>
+    </div>
+  </section>
+
   <main class="wrap">
-    <!-- SEARCH + PILLS -->
-    <input id="q" class="search" placeholder="Zoek op titel of ingrediënt…" />
-    <div id="pills" class="pillbar"></div>
-
-    <!-- LIST -->
-    <section id="listView">
+    <!-- SEARCH + LIST -->
+    <div id="listView" aria-live="polite">
+      <div class="searchbar">
+        <input id="q" class="input" type="search" placeholder="Zoek op titel, ingrediënt, tag… (bijv. 'kip', 'pasta')" />
+        <select id="cat" class="input">
+          <option value="">Alle categorieën</option>
+          <option value="ontbijt">Ontbijt</option>
+          <option value="lunch">Lunch</option>
+          <option value="diner">Diner</option>
+          <option value="snack">Snack</option>
+        </select>
+        <select id="sort" class="input">
+          <option value="">Sorteer op</option>
+          <option value="kcal-asc">Kcal ↑</option>
+          <option value="kcal-desc">Kcal ↓</option>
+          <option value="protein-desc">Eiwit ↓</option>
+          <option value="carbs-desc">Koolh. ↓</option>
+          <option value="fat-desc">Vetten ↓</option>
+        </select>
+      </div>
       <div id="cards" class="grid"></div>
-    </section>
+      <div id="empty" class="sub" style="text-align:center" hidden>Geen resultaten. Pas je zoekopdracht of filters aan.</div>
+    </div>
 
-    <!-- DETAIL -->
+    <!-- DETAIL VIEW -->
     <section id="detailView" hidden>
       <a href="#" class="back" onclick="return backToList()">← Terug</a>
-      <h2 id="dTitle" class="title"></h2>
+      <h1 id="dTitle" class="h1"></h1>
       <div id="dSubtitle" class="subtitle"></div>
 
       <div class="two">
         <div class="panel">
           <div class="inputs">
-            <div>
-              <label>Porties</label>
-              <input id="inServ" class="in" type="number" min="1" value="4" />
-            </div>
-            <div>
-              <label>Vlees p.p. (g)</label>
-              <input id="inMeat" class="in" type="number" min="0" value="100" />
-            </div>
-            <div>
-              <label>Rijst p.p. (g droog)</label>
-              <input id="inRice" class="in" type="number" min="0" value="80" />
-            </div>
-            <div>
-              <label>Groente p.p. (g)</label>
-              <input id="inVeg" class="in" type="number" min="0" value="200" />
-            </div>
-            <div>
-              <label>Water in saus (ml, totaal)</label>
-              <input id="inWater" class="in" type="number" min="0" value="20" />
-            </div>
-            <div style="align-self:end"><button id="apply" class="btn apply">Toepassen</button></div>
+            <label class="label">Porties<input id="inServ" class="in" type="number" min="1" value="4"></label>
+            <label class="label">Vlees p.p. (g)<input id="inMeat" class="in" type="number" min="0" value="100"></label>
+            <label class="label">Rijst p.p. (g droog)<input id="inRice" class="in" type="number" min="0" value="80"></label>
+            <label class="label">Groente p.p. (g)<input id="inVeg" class="in" type="number" min="0" value="200"></label>
+            <label class="label">Water in saus (ml, totaal)<input id="inWater" class="in" type="number" min="0" value="20"></label>
+            <div style="align-self:end"><button id="apply" class="btn acc">Toepassen</button></div>
           </div>
 
           <h3>Ingrediënten</h3>
           <div class="panel" style="padding:0">
             <table id="tbl">
-              <thead>
-                <tr><th>Ingrediënt</th><th>Hoeveelheid</th><th>Eiwit</th><th>Khd</th><th>Vet</th><th>kcal</th></tr>
-              </thead>
+              <thead><tr><th>Ingrediënt</th><th>Hoeveelheid</th><th>Eiwit</th><th>Khd</th><th>Vet</th><th>kcal</th></tr></thead>
               <tbody></tbody>
-              <tfoot>
-                <tr><td>Totaal</td><td id="tQty">—</td><td id="tP">—</td><td id="tC">—</td><td id="tF">—</td><td id="tK">—</td></tr>
-              </tfoot>
+              <tfoot><tr><td>Totaal</td><td id="tQty">—</td><td id="tP">—</td><td id="tC">—</td><td id="tF">—</td><td id="tK">—</td></tr></tfoot>
             </table>
           </div>
 
@@ -132,193 +168,58 @@
         <div class="panel">
           <h3>Macro's (hele bereiding)</h3>
           <div class="summary">
-            <div class="chip"><div>Eiwit</div><div id="sP" class="num">—</div><div>g</div></div>
-            <div class="chip"><div>Koolhydraten</div><div id="sC" class="num">—</div><div>g</div></div>
-            <div class="chip"><div>Vetten</div><div id="sF" class="num">—</div><div>g</div></div>
-            <div class="chip"><div>Calorieën</div><div id="sK" class="num">—</div><div>kcal</div></div>
+            <div class="chipbox"><div>Eiwit</div><div id="sP" class="num">—</div><div>g</div></div>
+            <div class="chipbox"><div>Koolhydraten</div><div id="sC" class="num">—</div><div>g</div></div>
+            <div class="chipbox"><div>Vetten</div><div id="sF" class="num">—</div><div>g</div></div>
+            <div class="chipbox"><div>Calorieën</div><div id="sK" class="num">—</div><div>kcal</div></div>
           </div>
         </div>
       </div>
     </section>
   </main>
 
+  <div class="footer">© <span id="year"></span> Macromasters — clean UI voor snelle macro‑checks.</div>
+
   <script>
-    const $ = (q, el=document) => el.querySelector(q);
-    const $$ = (q, el=document) => [...el.querySelectorAll(q)];
-    const state = { all: [], view:'list', current:null };
-
-    const NUTRIENTS = {
-      // per 100g (of per 100ml waar unit==='ml')
-      beef_raw:{p:22,c:0,f:4,k:130},
-      rice_dry:{p:7,c:78,f:0.6,k:360},
-      broccoli_raw:{p:3,c:7,f:0.4,k:35},
-      oil:{p:0,c:0,f:100,k:900},
-      soy_sauce_ml:{p:5,c:6,f:0,k:80},
-      rice_vinegar_ml:{p:0,c:1,f:0,k:3.3},
-      sesame_oil:{p:0,c:0,f:100,k:900},
-      garlic:{p:6.4,c:33,f:0.5,k:149},
-      ginger:{p:1.8,c:18,f:0.8,k:80},
-      water:{p:0,c:0,f:0,k:0}
-    };
-
-    function fmt(x){return (Math.round(x*10)/10).toLocaleString('nl-NL')}
+    const $ = (q, el=document) => el.querySelector(q); const $$ = (q, el=document) => [...el.querySelectorAll(q)];
+    const state = { all: [], view:'list', current:null, query:'', cat:'', sort:'' };
+    function slugify(s){return (s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')}
 
     async function loadData(){
-      try{
-        const r = await fetch('./recipes.json?cb='+Date.now());
-        if(!r.ok) throw new Error(r.status);
-        return await r.json();
-      }catch(e){
-        console.warn('fallback json omdat recipes.json niet laadt', e);
-        return [
-          {
-            id:'beef-teriyaki',
-            title:'Beef Teriyaki',
-            subtitle:'Suikervrij, zonder binders. Glans door reductie. Sojasaus, gember, knoflook.',
-            tags:['vlees','rijst'],
-            params:{servings:4, meat_g:100, rice_g_dry:80, veg_g:200, water_ml_total:20},
-            model:'beef_teriyaki'
-          },
-          {
-            id:'kip-rijst-groente',
-            title:'Kip • Rijst • Groente',
-            subtitle:'Basis fitness recept; stel g/pp in en schaal porties + macro\'s.',
-            tags:['kip','rijst'],
-            params:{servings:4, meat_g:120, rice_g_dry:75, veg_g:200, water_ml_total:0},
-            model:'chicken_rice_veg'
-          }
-        ];
-      }
+      try{ const r = await fetch('./recipes.json?cb='+Date.now()); if(!r.ok) throw new Error(r.status); const data = await r.json(); return data.map(x=>({...x,id:x.id||slugify(x.title)})); }
+      catch(e){ console.warn('fallback json omdat recipes.json niet laadt', e); return [ { id:'beef-teriyaki', title:'Beef Teriyaki', subtitle:'Suikervrij, zonder binders. Glans door reductie. Sojasaus, gember, knoflook.', tags:['vlees','rijst'], params:{servings:4, meat_g:100, rice_g_dry:80, veg_g:200, water_ml_total:20}, model:'beef_teriyaki' }, { id:'kip-rijst-groente', title:'Kip • Rijst • Groente', subtitle:'Basis fitness recept; stel g/pp in en schaal porties + macro\'s.', tags:['kip','rijst'], params:{servings:4, meat_g:120, rice_g_dry:75, veg_g:200, water_ml_total:0}, model:'chicken_rice_veg' } ]; }
     }
 
-    function buildPills(){
-      const allTags = [...new Set(state.all.flatMap(r=>r.tags||[]))].slice(0,10);
-      $('#pills').innerHTML = allTags.map(t=>`<button class="pill" data-t="${t}">${t}</button>`).join('');
-      $$('#pills .pill').forEach(el=> el.addEventListener('click',()=>{ $('#q').value = t(el); filter(); }));
-      function t(el){return el.getAttribute('data-t')}
-    }
+    function applyFilters(list){ let out=list; const q=state.query.trim().toLowerCase(); if(q){ out = out.filter(r => (r.title+ ' ' + (r.subtitle||'') + ' ' + (r.tags||[]).join(' ')).toLowerCase().includes(q)); } if(state.cat){ out = out.filter(r => (r.category||'').toLowerCase()===state.cat); } switch(state.sort){ case 'kcal-asc': case 'kcal-desc': default: } return out; }
 
-    function filter(){
-      const q = ($('#q').value||'').toLowerCase();
-      const list = state.all.filter(r => (r.title+ ' ' + (r.subtitle||'') + ' ' + (r.tags||[]).join(' ')).toLowerCase().includes(q));
-      renderCards(list);
-    }
+    function renderCards(list){ const c=$('#cards'); c.innerHTML=''; if(!list.length){ $('#empty').hidden=false; return } $('#empty').hidden=true; list.forEach(r=>{ const el=document.createElement('article'); el.className='card'; el.innerHTML=`
+      ${r.image?`<div class='thumb'><img src='${r.image}' alt='${r.title}'></div>`:"<div class='thumb'></div>"}
+      <h3>${r.title}</h3>
+      ${r.subtitle?`<p class='desc'>${r.subtitle}</p>`:''}
+      ${r.tags?.length?`<div class='tagbar'>${r.tags.map(t=>`<span class='pill'>${t}</span>`).join('')}</div>`:''}
+      <button class='btn acc open'>Open recept</button>`; el.querySelector('.open').addEventListener('click',()=> openDetail(r.id)); c.appendChild(el); }); }
 
-    function renderCards(list){
-      const c = $('#cards'); c.innerHTML='';
-      list.forEach(r=>{
-        const el = document.createElement('article');
-        el.className='card';
-        el.innerHTML = `
-          <h3>${r.title}</h3>
-          <div class="desc">${r.subtitle||''}</div>
-          <div class="tagbar">${(r.tags||[]).map(x=>`<span class="pill">${x}</span>`).join('')}</div>
-          <button class="btn open">Open recept</button>
-        `;
-        el.querySelector('.open').addEventListener('click',()=> openDetail(r.id));
-        c.appendChild(el);
-      })
-    }
+    function showView(v){ state.view=v; $('#listView').hidden = v!=='list'; $('#detailView').hidden = v!=='detail'; }
 
-    function openDetail(id){
-      const r = state.all.find(x=>x.id===id); if(!r) return;
-      state.current = JSON.parse(JSON.stringify(r));
-      $('#dTitle').textContent = r.title; $('#dSubtitle').textContent = r.subtitle||'';
-      $('#inServ').value = r.params?.servings ?? 4;
-      $('#inMeat').value = r.params?.meat_g ?? 100;
-      $('#inRice').value = r.params?.rice_g_dry ?? 80;
-      $('#inVeg').value = r.params?.veg_g ?? 200;
-      $('#inWater').value = r.params?.water_ml_total ?? 0;
-      calcAndRender();
-      document.getElementById('detailView').hidden = false;
-      document.getElementById('listView').hidden = true;
-      history.pushState({id}, '', '#/'+id);
-      window.scrollTo({top:0,behavior:'smooth'});
-    }
+    function openDetail(id){ const r = state.all.find(x=>x.id===id); if(!r) return; state.current = JSON.parse(JSON.stringify(r)); $('#dTitle').textContent=r.title; $('#dSubtitle').textContent=r.subtitle||''; $('#inServ').value=r.params?.servings??4; $('#inMeat').value=r.params?.meat_g??100; $('#inRice').value=r.params?.rice_g_dry??80; $('#inVeg').value=r.params?.veg_g??200; $('#inWater').value=r.params?.water_ml_total??0; calcAndRender(); showView('detail'); history.pushState({id}, '', '#/'+id); window.scrollTo({top:0,behavior:'smooth'}); }
+    function backToList(){ showView('list'); history.pushState({}, '', '#/'); return false }
 
-    function backToList(){
-      document.getElementById('detailView').hidden = true;
-      document.getElementById('listView').hidden = false;
-      history.pushState({}, '', '#/');
-      return false;
-    }
+    $('#q').addEventListener('input', e=>{ state.query=e.target.value; renderCards(applyFilters(state.all)); });
+    $('#cat').addEventListener('change', e=>{ state.cat=e.target.value; renderCards(applyFilters(state.all)); });
+    $('#sort').addEventListener('change', e=>{ state.sort=e.target.value; renderCards(applyFilters(state.all)); });
+    $('#apply').addEventListener('click', calcAndRender);
+    $('#navRecipes').addEventListener('click', ()=>{ showView('list'); window.scrollTo({top:document.querySelector('#listView').offsetTop-60,behavior:'smooth'}); });
+    $('#navCalc').addEventListener('click', ()=>{ window.location.hash='#/calc'; alert('Gebruik de macro calculator onderaan (komt als aparte pagina in de volgende versie).'); });
+    $('#ctaRecipes').addEventListener('click', (e)=>{ e.preventDefault(); showView('list'); window.scrollTo({top:document.querySelector('#listView').offsetTop-60,behavior:'smooth'}); });
+    $('#ctaCalc').addEventListener('click', (e)=>{ e.preventDefault(); window.location.hash='#/calc'; alert('Gebruik de macro calculator onderaan (komt als aparte pagina in de volgende versie).'); });
 
-    $('#apply')?.addEventListener('click', ()=> calcAndRender());
-    $('#q').addEventListener('input', filter);
-    $('#clearBtn').addEventListener('click', ()=>{ $('#q').value=''; filter(); });
+    const NUTRIENTS = { beef_raw:{p:22,c:0,f:4,k:130}, rice_dry:{p:7,c:78,f:0.6,k:360}, broccoli_raw:{p:3,c:7,f:0.4,k:35}, oil:{p:0,c:0,f:100,k:900}, soy_sauce_ml:{p:5,c:6,f:0,k:80}, rice_vinegar_ml:{p:0,c:1,f:0,k:3.3}, sesame_oil:{p:0,c:0,f:100,k:900}, garlic:{p:6.4,c:33,f:0.5,k:149}, ginger:{p:1.8,c:18,f:0.8,k:80}, water:{p:0,c:0,f:0,k:0}, chicken_raw:{p:23,c:0,f:1.5,k:110}, veg_mix:{p:2,c:6,f:0.2,k:30} };
+    function fmt(x){return (Math.round(x*10)/10).toLocaleString('nl-NL')}
+    function ingr(name, qty, unit, per100){ const f=qty/100; return {n:name, qty, unit, p:per100.p*f, c:per100.c*f, f:per100.f*f, k:per100.k*f}; }
+    function calcAndRender(){ const s=+$('#inServ').value, meat=+$('#inMeat').value, rice=+$('#inRice').value, veg=+$('#inVeg').value, wml=+$('#inWater').value; const r=state.current; let rows=[]; if(r.model==='beef_teriyaki'){ rows=[ ingr('Rundereepjes (rauw)', s*meat,'g',NUTRIENTS.beef_raw), ingr('Witte rijst (droog)', s*rice,'g',NUTRIENTS.rice_dry), ingr('Broccoli (rauw)', s*veg,'g',NUTRIENTS.broccoli_raw), ingr('Neutrale olie', 10,'g',NUTRIENTS.oil), ingr('Sojasaus',80,'ml',NUTRIENTS.soy_sauce_ml), ingr('Rijstazijn',30,'ml',NUTRIENTS.rice_vinegar_ml), ingr('Sesamolie',5,'g',NUTRIENTS.sesame_oil), ingr('Knoflook',6,'g',NUTRIENTS.garlic), ingr('Gember',20,'g',NUTRIENTS.ginger), ingr('Water',wml,'ml',NUTRIENTS.water) ]; $('#steps').innerHTML=`<ol style="margin:0 0 0 18px;padding:12px"><li><b>Marineren (15–60 min)</b>: Sojasaus, rijstazijn, sesamolie, knoflook, gember. 2 el apart. Rest over vlees.</li><li><b>Bakken</b>: Vlees droog, pan heet met 1 el olie. In batches 1–2 min bruin.</li><li><b>Inkoken</b>: Marinade 2–3 min hard koken tot stroperig.</li><li><b>Afmaken</b>: Vlees terug, 20–30 s omscheppen. Eventueel 1–2 el water voor dun glazuur.</li></ol>`; } else { rows=[ ingr('Kipfilet (rauw)', s*meat,'g',NUTRIENTS.chicken_raw), ingr('Witte rijst (droog)', s*rice,'g',NUTRIENTS.rice_dry), ingr('Groentemix (rauw)', s*veg,'g',NUTRIENTS.veg_mix), ingr('Olijfolie',8,'g',NUTRIENTS.oil), ingr('Kruiden/zout',2,'g',NUTRIENTS.water) ]; $('#steps').innerHTML=`<ol style="margin:0 0 0 18px;padding:12px"><li>Kip kruiden en bakken.</li><li>Rijst koken (droog gewogen).</li><li>Groente roerbakken; alles samen serveren.</li></ol>`; }
+      const tb=$('#tbl tbody'); tb.innerHTML=''; let TP=0,TC=0,TF=0,TK=0,TQ=0; for(const row of rows){ const tr=document.createElement('tr'); tr.innerHTML=`<td>${row.n}</td><td>${fmt(row.qty)} ${row.unit}</td><td>${fmt(row.p)}</td><td>${fmt(row.c)}</td><td>${fmt(row.f)}</td><td>${fmt(row.k)}</td>`; tb.appendChild(tr); TP+=row.p; TC+=row.c; TF+=row.f; TK+=row.k; TQ+=row.qty; } $('#tQty').textContent=fmt(TQ)+' g/ml'; $('#tP').textContent=fmt(TP); $('#tC').textContent=fmt(TC); $('#tF').textContent=fmt(TF); $('#tK').textContent=fmt(TK); $('#sP').textContent=fmt(TP); $('#sC').textContent=fmt(TC); $('#sF').textContent=fmt(TF); $('#sK').textContent=fmt(TK); }
 
-    function calcAndRender(){
-      const s = +$('#inServ').value, meat = +$('#inMeat').value, rice = +$('#inRice').value, veg=+$('#inVeg').value, wml=+$('#inWater').value;
-      const r = state.current;
-      const model = r.model;
-
-      // Build ingredient rows depending on model
-      let rows = [];
-      if(model==='beef_teriyaki'){
-        rows = [
-          ingr('Rundereepjes (rauw)', s*meat, 'g', NUTRIENTS.beef_raw),
-          ingr('Witte rijst (droog)', s*rice, 'g', NUTRIENTS.rice_dry),
-          ingr('Broccoli (rauw)', s*veg, 'g', NUTRIENTS.broccoli_raw),
-          ingr('Neutrale olie', 10, 'g', NUTRIENTS.oil),
-          ingr('Sojasaus', 80, 'ml', NUTRIENTS.soy_sauce_ml),
-          ingr('Rijstazijn', 30, 'ml', NUTRIENTS.rice_vinegar_ml),
-          ingr('Sesamolie', 5, 'g', NUTRIENTS.sesame_oil),
-          ingr('Knoflook', 6, 'g', NUTRIENTS.garlic),
-          ingr('Gember', 20, 'g', NUTRIENTS.ginger),
-          ingr('Water', wml, 'ml', NUTRIENTS.water)
-        ];
-        $('#steps').innerHTML = `<ol style="margin:0 0 0 18px;padding:12px">
-          <li><b>Marineren (15–60 min)</b>: Meng sojasaus, rijstazijn, sesamolie, knoflook en gember. 2 el apart. Rest over het vlees.</li>
-          <li><b>Bakken</b>: Dep vlees droog. Wok/koekenpan heet met 1 el olie. Bak in batches 1–2 min bruin. Uit de pan.</li>
-          <li><b>Inkoken</b>: Rauwe marinade in pan, 2–3 min hard koken tot stroperig (reductie).</li>
-          <li><b>Afmaken</b>: Vlees terug, 20–30 s omscheppen tot glans. Eventueel 1–2 el water erbij voor dun glazuur.</li>
-        </ol>`;
-      } else if(model==='chicken_rice_veg'){
-        rows = [
-          ingr('Kipfilet (rauw)', s*meat, 'g', {p:23,c:0,f:1.5,k:110}),
-          ingr('Witte rijst (droog)', s*rice, 'g', NUTRIENTS.rice_dry),
-          ingr('Groentemix (rauw)', s*veg, 'g', {p:2,c:6,f:0.2,k:30}),
-          ingr('Olijfolie', 8, 'g', NUTRIENTS.oil),
-          ingr('Kruiden/zout', 2, 'g', {p:0,c:0,f:0,k:0})
-        ];
-        $('#steps').innerHTML = `<ol style="margin:0 0 0 18px;padding:12px">
-          <li>Kip in blokjes, kruiden. Bak goudbruin.</li>
-          <li>Rijst koken (droog gewogen).</li>
-          <li>Groente roerbakken tot beetgaar. Alles samen serveren.</li>
-        </ol>`;
-      }
-
-      // render table
-      const tbody = $('#tbl tbody'); tbody.innerHTML='';
-      let TP=0, TC=0, TF=0, TK=0, TQ=0;
-      for(const r of rows){
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${r.n}</td><td>${fmt(r.qty)} ${r.unit}</td><td>${fmt(r.p)}</td><td>${fmt(r.c)}</td><td>${fmt(r.f)}</td><td>${fmt(r.k)}</td>`;
-        tbody.appendChild(tr);
-        TP+=r.p; TC+=r.c; TF+=r.f; TK+=r.k; TQ+=r.qty;
-      }
-      $('#tQty').textContent = fmt(TQ) + ' g/ml';
-      $('#tP').textContent = fmt(TP);
-      $('#tC').textContent = fmt(TC);
-      $('#tF').textContent = fmt(TF);
-      $('#tK').textContent = fmt(TK);
-      $('#sP').textContent = fmt(TP);
-      $('#sC').textContent = fmt(TC);
-      $('#sF').textContent = fmt(TF);
-      $('#sK').textContent = fmt(TK);
-    }
-
-    function ingr(name, qty, unit, per100){
-      const factor = qty/100;
-      const p = per100.p*factor, c = per100.c*factor, f = per100.f*factor, k = per100.k*factor;
-      return {n:name, qty, unit, p, c, f, k};
-    }
-
-    (async function init(){
-      const data = await loadData(); state.all = data; buildPills(); renderCards(state.all);
-      const hash = location.hash.replace('#/',''); if(hash){ openDetail(hash) }
-      window.addEventListener('popstate', ()=>{ const h=location.hash.replace('#/',''); if(h) openDetail(h); else backToList(); });
-    })();
+    (async function init(){ document.getElementById('year').textContent = new Date().getFullYear(); state.all = await loadData(); renderCards(state.all); const hash=location.hash.replace('#/',''); if(hash){ openDetail(hash) } window.addEventListener('popstate', ()=>{ const h=location.hash.replace('#/',''); if(h) openDetail(h); else backToList(); }); })();
   </script>
 </body>
 </html>
